@@ -21,13 +21,21 @@ type Fibonacci(value, next) =
         Fibonacci(next, value + next)
     static member First = Fibonacci(1, 2)
 
-let rec addNext (number:Linear) max =
-    if number.Value >= max then 0
-    else number.ValueIfMultipleOfEither 3 5 +
-            addNext number.Next max
+type IInclusionStrategy =
+    abstract member IncludeValue: Number -> bool
+
+type FizzBuzzStrategy() =
+    interface IInclusionStrategy with
+        member __.IncludeValue(number) =
+            number.IsMultipleOfEither 3 5
+            
+let rec addNext (number:Linear) (inclusionStrategy:IInclusionStrategy) max =
+    if number.Value > max then 0
+    else (if inclusionStrategy.IncludeValue(number) then number.Value else 0 ) +
+            addNext number.Next inclusionStrategy max
 
 let euler1 =
-    addNext (Linear(0, 1)) 1000
+    addNext (Linear(0, 1)) (FizzBuzzStrategy()) 999
 
 let rec addNextEvenFibonacci (fib:Fibonacci) max =
     if fib.Value > max then 0
