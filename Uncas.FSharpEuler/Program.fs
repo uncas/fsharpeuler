@@ -1,13 +1,13 @@
 ﻿type Number(value) =
     member this.Value = value
-    member this.ValueIfEven =
-        if value % 2 = 0 then value else 0
     member this.IsMultipleOf divisor =
         value % divisor = 0
-    member this.IsMultipleOf3Or5 =
-        this.IsMultipleOf 3 || this.IsMultipleOf 5
-    member this.NumberIfMultipleOf3Or5 =
-        if this.IsMultipleOf3Or5 then value
+    member this.IsMultipleOfEither x y =
+        this.IsMultipleOf x || this.IsMultipleOf y
+    member this.ValueIfEven =
+        if this.IsMultipleOf 2 then value else 0
+    member this.ValueIfMultipleOfEither x y =
+        if this.IsMultipleOfEither x y then value
         else 0
 
 type Linear(value, step) =
@@ -23,7 +23,8 @@ type Fibonacci(value, next) =
 
 let rec addNext (number:Linear) max =
     if number.Value >= max then 0
-    else number.NumberIfMultipleOf3Or5 + addNext number.Next max
+    else number.ValueIfMultipleOfEither 3 5 +
+            addNext number.Next max
 
 let euler1 =
     addNext (Linear(0, 1)) 1000
