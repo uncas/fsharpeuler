@@ -31,8 +31,9 @@ type FizzBuzzStrategy() =
     interface IInclusionStrategy with
         member __.IncludeValue(number) =
             number.IsMultipleOfEither 3 5
-            
-let rec addNext (number:Linear) (inclusionStrategy:IInclusionStrategy) max =
+
+let rec addNext (number:NumberInSequence<'T>)
+        (inclusionStrategy:IInclusionStrategy) max =
     if number.Value > max then 0
     else (if inclusionStrategy.IncludeValue(number) then number.Value else 0 ) +
             addNext number.Next inclusionStrategy max
