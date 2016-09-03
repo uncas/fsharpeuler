@@ -10,6 +10,7 @@
         if this.IsMultipleOfEither x y then value
         else 0
 
+
 [<AbstractClass>]
 type NumberInSequence<'T>(value) =
     inherit Number(value)
@@ -24,6 +25,7 @@ type Fibonacci(value, next) =
     override this.Next = Fibonacci(next, value + next)
     static member First = Fibonacci(1, 2)
 
+
 type IInclusionStrategy =
     abstract member IncludeValue: Number -> bool
 
@@ -32,24 +34,29 @@ type FizzBuzzStrategy() =
         member __.IncludeValue(number) =
             number.IsMultipleOfEither 3 5
 
+type EvenStrategy() =
+    interface IInclusionStrategy with
+        member __.IncludeValue(number) =
+            number.IsMultipleOf 2
+
+
 let rec addNext (number:NumberInSequence<'T>)
         (inclusionStrategy:IInclusionStrategy) max =
     if number.Value > max then 0
     else (if inclusionStrategy.IncludeValue(number) then number.Value else 0 ) +
             addNext number.Next inclusionStrategy max
 
+
 let euler1 =
     addNext (Linear(0, 1)) (FizzBuzzStrategy()) 999
 
-let rec addNextEvenFibonacci (fib:Fibonacci) max =
-    if fib.Value > max then 0
-    else fib.ValueIfEven + addNextEvenFibonacci fib.Next max
-
 let euler2 =
-    addNextEvenFibonacci Fibonacci.First 4000000
+    addNext (Fibonacci.First) (EvenStrategy()) 4000000
+
 
 let euler actual expected =
     printfn "(%A) %A should be %A" (actual = expected) actual expected
+
 
 [<EntryPoint>]
 let main argv = 
