@@ -1,7 +1,19 @@
 ﻿type Number(value) =
     member this.Value = value
     member this.ValueIfEven =
-        if value%2=0 then value else 0
+        if value % 2 = 0 then value else 0
+    member this.IsMultipleOf divisor =
+        value % divisor = 0
+    member this.IsMultipleOf3Or5 =
+        this.IsMultipleOf 3 || this.IsMultipleOf 5
+    member this.NumberIfMultipleOf3Or5 =
+        if this.IsMultipleOf3Or5 then value
+        else 0
+
+type Linear(value, step) =
+    inherit Number(value)
+    member this.Next =
+        Linear(value + step, step)
 
 type Fibonacci(value, next) =
     inherit Number(value)
@@ -9,22 +21,12 @@ type Fibonacci(value, next) =
         Fibonacci(next, value + next)
     static member First = Fibonacci(1, 2)
 
-let isMultipleOf number divisor =
-    number % divisor = 0
-
-let isMultipleOf3Or5 number =
-    isMultipleOf number 3 || isMultipleOf number 5
-
-let numberIfMultipleOf3Or5 number =
-    if isMultipleOf3Or5 number then number
-    else 0
-
-let rec addNext number max =
-    if number >= max then 0
-    else numberIfMultipleOf3Or5 number + addNext (number+1) max
+let rec addNext (number:Linear) max =
+    if number.Value >= max then 0
+    else number.NumberIfMultipleOf3Or5 + addNext number.Next max
 
 let euler1 =
-    addNext 0 1000
+    addNext (Linear(0, 1)) 1000
 
 let rec addNextEvenFibonacci (fib:Fibonacci) max =
     if fib.Value > max then 0
