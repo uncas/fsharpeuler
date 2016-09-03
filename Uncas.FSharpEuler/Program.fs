@@ -31,20 +31,17 @@ type IInclusionStrategy =
 
 type FizzBuzzStrategy() =
     interface IInclusionStrategy with
-        member __.IncludeValue(number) =
-            number.IsMultipleOfEither 3 5
+        member __.IncludeValue(number) = number.IsMultipleOfEither 3 5
 
 type EvenStrategy() =
     interface IInclusionStrategy with
-        member __.IncludeValue(number) =
-            number.IsMultipleOf 2
+        member __.IncludeValue(number) = number.IsMultipleOf 2
 
 
-let rec addNext (number:NumberInSequence<'T>)
-        (inclusionStrategy:IInclusionStrategy) max =
+let rec addNext (number:NumberInSequence<'T>) (strategy:IInclusionStrategy) max =
     if number.Value > max then 0
-    else (if inclusionStrategy.IncludeValue(number) then number.Value else 0 ) +
-            addNext number.Next inclusionStrategy max
+    else (if strategy.IncludeValue(number) then number.Value else 0) +
+            addNext number.Next strategy max
 
 
 let euler1 =
@@ -52,6 +49,23 @@ let euler1 =
 
 let euler2 =
     addNext (Fibonacci.First) (EvenStrategy()) 4000000
+
+
+let rec largestPrime (number:int64) (divisor:int64) =
+    if number % divisor = 0L then
+        let newNumber = number/divisor
+        if newNumber <= 1L then divisor
+        else largestPrime newNumber divisor
+    else if (divisor+1L)*(divisor+1L) > number then
+        number
+    else
+        largestPrime number (divisor+1L)
+
+let euler3a =
+    largestPrime 13195L 2L
+
+let euler3b =
+    largestPrime 600851475143L 2L
 
 
 let euler actual expected =
@@ -62,4 +76,6 @@ let euler actual expected =
 let main argv = 
     euler euler1 233168
     euler euler2 4613732
+    euler euler3a 29L
+    euler euler3b 6857L
     0 // return an integer exit code
