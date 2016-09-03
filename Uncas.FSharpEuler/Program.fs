@@ -2,6 +2,8 @@
     member this.Value = value
     member this.Next =
         Fibonacci(next, value + next)
+    member this.ValueIfEven =
+        if value%2=0 then value else 0
     static member First = Fibonacci(1, 2)
 
 let isMultipleOf number divisor =
@@ -21,13 +23,9 @@ let rec addNext number max =
 let euler1 =
     addNext 0 1000
 
-let numberIfEven number =
-    if isMultipleOf number 2 then number
-    else 0
-
 let rec addNextEvenFibonacci (fib:Fibonacci) max =
     if fib.Value > max then 0
-    else numberIfEven fib.Value + addNextEvenFibonacci fib.Next max
+    else fib.ValueIfEven + addNextEvenFibonacci fib.Next max
 
 let euler2 =
     addNextEvenFibonacci Fibonacci.First 4000000
