@@ -10,15 +10,18 @@
         if this.IsMultipleOfEither x y then value
         else 0
 
-type Linear(value, step) =
+[<AbstractClass>]
+type NumberInSequence<'T>(value) =
     inherit Number(value)
-    member this.Next =
-        Linear(value + step, step)
+    abstract member Next : 'T
+
+type Linear(value, step) =
+    inherit NumberInSequence<Linear>(value)
+    override this.Next = Linear(value + step, step)
 
 type Fibonacci(value, next) =
-    inherit Number(value)
-    member this.Next =
-        Fibonacci(next, value + next)
+    inherit NumberInSequence<Fibonacci>(value)
+    override this.Next = Fibonacci(next, value + next)
     static member First = Fibonacci(1, 2)
 
 type IInclusionStrategy =
