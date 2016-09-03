@@ -1,9 +1,12 @@
-﻿type Fibonacci(value, next) =
+﻿type Number(value) =
     member this.Value = value
-    member this.Next =
-        Fibonacci(next, value + next)
     member this.ValueIfEven =
         if value%2=0 then value else 0
+
+type Fibonacci(value, next) =
+    inherit Number(value)
+    member this.Next =
+        Fibonacci(next, value + next)
     static member First = Fibonacci(1, 2)
 
 let isMultipleOf number divisor =
