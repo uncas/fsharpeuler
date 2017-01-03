@@ -1,4 +1,10 @@
-﻿type Number(value) =
+﻿open System
+
+let isPal str = 
+    let str = str |> Seq.filter ((<>) ' ') |> Seq.toList
+    str = (str |> List.rev)
+    
+type Number(value) =
     member this.Value = value
     member this.IsMultipleOf divisor =
         value % divisor = 0
@@ -9,6 +15,8 @@
     member this.ValueIfMultipleOfEither x y =
         if this.IsMultipleOfEither x y then value
         else 0
+    member this.IsPalindromic =
+        isPal (value.ToString())
 
 
 [<AbstractClass>]
@@ -51,10 +59,10 @@ let euler2 =
     addNext (Fibonacci.First) (EvenStrategy()) 4000000
 
 
-let rec largestPrime (number:int64) (divisor:int64) =
+let rec largestPrime number divisor =
     if number % divisor = 0L then
         let newNumber = number/divisor
-        if newNumber <= 1L then divisor
+        if newNumber = 1L then divisor
         else largestPrime newNumber divisor
     else if (divisor+1L)*(divisor+1L) > number then
         number
@@ -68,6 +76,10 @@ let euler3b =
     largestPrime 600851475143L 2L
 
 
+let euler4 =
+    // Largest palindromic number from product of two 3-digit numbers
+    printfn "%A" (Number(12123121).IsPalindromic)
+
 let euler actual expected =
     printfn "(%A) %A should be %A" (actual = expected) actual expected
 
@@ -78,4 +90,5 @@ let main argv =
     euler euler2 4613732
     euler euler3a 29L
     euler euler3b 6857L
+    euler4
     0 // return an integer exit code
